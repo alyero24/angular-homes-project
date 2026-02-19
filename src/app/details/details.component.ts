@@ -3,11 +3,12 @@ import { CommonModule } from "@angular/common";
 import { ActivatedRoute } from "@angular/router";
 import { HousingLocation } from "../housing-location";
 import { HousingService } from "../housing.service";
+import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 
 @Component({
   selector: "app-details",
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ReactiveFormsModule],
   template: `
     <article>
       <img class="listing-photo" [src]="housingLocation?.photo" />
@@ -29,7 +30,16 @@ import { HousingService } from "../housing.service";
       </section>
       <section class="lasting-apply">
         <h2 class="section-heading">Apply to live here</h2>
-        <button class="primary" type="button">Apply now</button>
+        <form [formGroup]="applyForm">
+          <label for="first-name">First Name</label>
+          <input id="first-name" type="text" formControlName="firstName" />
+
+          <label for="last-name">Last Name</label>
+          <input id="last-name" type="text" formControlName="lastName" />
+
+          <label for="email">Email</label>
+          <input id="email" type="text" formControlName="email" />
+        </form>
       </section>
     </article>
   `,
@@ -39,7 +49,11 @@ export class DetailsComponent {
   route: ActivatedRoute = inject(ActivatedRoute);
   housingService = inject(HousingService);
   housingLocation: HousingLocation | undefined;
-
+  applyForm = new FormGroup({
+    firstName: new FormControl(""),
+    lastName: new FormControl(""),
+    email: new FormControl(""),
+  });
   constructor() {
     const housingLocationId = Number(this.route.snapshot.params["id"]);
     this.housingLocation =
